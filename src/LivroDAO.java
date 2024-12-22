@@ -25,6 +25,28 @@ public class LivroDAO {
         }
     }
 
+    public static void listarLivrosPorFornecedor(String fornecedor) {
+        String sql = "SELECT * FROM Livro WHERE Fornecedor = ?";
+
+        try (Connection conn = ConexaoBD.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, fornecedor);
+            ResultSet rs = stmt.executeQuery();
+
+            System.out.println("\n=== Lista de Livros do Fornecedor: " + fornecedor + " ===");
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("ID_Livro") +
+                                   ", Título: " + rs.getString("Titulo") +
+                                   ", Autor: " + rs.getString("Autor") +
+                                   ", Fornecedor: " + rs.getString("Fornecedor"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar livros por fornecedor: " + e.getMessage());
+        }
+    }
+
     public static void adicionarLivro(String titulo, String autor, String fornecedor) {
         String sql = "INSERT INTO Livro (Titulo, Autor, Fornecedor) VALUES (?, ?, ?)";
 

@@ -8,8 +8,7 @@ public class Biblioteca {
 
         do {
             exibirMenu();
-            opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir nova linha
+            opcao = lerOpcaoMenu();
 
             switch (opcao) {
                 case 1:
@@ -25,12 +24,24 @@ public class Biblioteca {
                     adicionarLivro();
                     break;
                 case 5:
+                    listarLivrosPorFornecedor();
+                    break;
+                case 6:
+                    buscarUsuarioPorNome();
+                    break;
+                case 7:
+                    buscarUsuarioPorTipo();
+                    break;
+                case 8:
+                    buscarUsuarioPorEmail();
+                    break;
+                case 9:
                     System.out.println("Saindo do sistema...");
                     break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
-        } while (opcao != 5);
+        } while (opcao != 9);
     }
 
     private static void exibirMenu() {
@@ -39,8 +50,28 @@ public class Biblioteca {
         System.out.println("2. Adicionar Usuário");
         System.out.println("3. Listar Livros");
         System.out.println("4. Adicionar Livro");
-        System.out.println("5. Sair");
+        System.out.println("5. Listar Livros por Fornecedor");
+        System.out.println("6. Buscar Usuário por Nome");
+        System.out.println("7. Buscar Usuário por Tipo");
+        System.out.println("8. Buscar Usuário por Email");
+        System.out.println("9. Sair");
         System.out.print("Escolha uma opção: ");
+    }
+
+    // Método para ler a opção do menu com tratamento de erro
+    private static int lerOpcaoMenu() {
+        int opcao = -1;
+        while (opcao < 1 || opcao > 9) {
+            try {
+                opcao = Integer.parseInt(scanner.nextLine());
+                if (opcao < 1 || opcao > 9) {
+                    System.out.println("Opção inválida. Digite um número entre 1 e 9.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Por favor, digite um número.");
+            }
+        }
+        return opcao;
     }
 
     private static void listarUsuarios() {
@@ -51,15 +82,52 @@ public class Biblioteca {
         System.out.print("Digite o nome do usuário: ");
         String nome = scanner.nextLine();
         System.out.print("Digite o tipo (Aluno/Professor): ");
-        String tipo = scanner.nextLine();
+        String tipo = lerTipoUsuario();
         System.out.print("Digite o email do usuário: ");
         String email = scanner.nextLine();
 
         UsuarioDAO.adicionarUsuario(nome, tipo, email);
     }
 
+    // Método para validar e garantir que o tipo de usuário seja "Aluno" ou "Professor"
+    private static String lerTipoUsuario() {
+        String tipo;
+        while (true) {
+            tipo = scanner.nextLine().trim().toLowerCase();
+            if (tipo.equals("aluno") || tipo.equals("professor")) {
+                return tipo.substring(0, 1).toUpperCase() + tipo.substring(1); // Retorna com a primeira letra maiúscula
+            } else {
+                System.out.println("Tipo inválido. Digite 'Aluno' ou 'Professor': ");
+            }
+        }
+    }
+
     private static void listarLivros() {
         LivroDAO.listarLivros();
+    }
+
+    private static void listarLivrosPorFornecedor() {
+        System.out.print("Digite o fornecedor: ");
+        String fornecedor = scanner.nextLine();
+        LivroDAO.listarLivrosPorFornecedor(fornecedor);
+    }
+
+    private static void buscarUsuarioPorNome() {
+        System.out.print("Digite o nome do usuário: ");
+        String nome = scanner.nextLine();
+        UsuarioDAO.buscarUsuarioPorNome(nome);
+    }
+
+    private static void buscarUsuarioPorTipo() {
+        System.out.print("Digite o tipo de usuário (Aluno/Professor): ");
+        String tipo = lerTipoUsuario();
+        UsuarioDAO.buscarUsuarioPorTipo(tipo);
+    }
+
+    private static void buscarUsuarioPorEmail() {
+        System.out.print("Digite o email do usuário: ");
+        String email = scanner.nextLine();
+        UsuarioDAO.buscarUsuarioPorEmail(email);
     }
 
     private static void adicionarLivro() {
